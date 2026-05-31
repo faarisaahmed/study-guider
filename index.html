@@ -6,1386 +6,959 @@
 <title>StudyEngine</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --surface2: #1c1c28;
-    --surface3: #242435;
-    --accent: #7c6af7;
-    --accent2: #4ecdc4;
-    --accent3: #ff6b6b;
-    --accent4: #ffd93d;
-    --text: #f0f0ff;
-    --muted: #6b6b8a;
-    --border: #2a2a3e;
-    --success: #4ecdc4;
-    --warn: #ffd93d;
-    --danger: #ff6b6b;
-    --radius: 12px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
+:root {
+  --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c28; --surface3:#242435;
+  --accent:#7c6af7; --accent2:#4ecdc4; --accent3:#ff6b6b; --accent4:#ffd93d;
+  --text:#f0f0ff; --muted:#6b6b8a; --border:#2a2a3e;
+  --success:#4ecdc4; --warn:#ffd93d; --danger:#ff6b6b; --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;overflow-x:hidden;}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,106,247,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,106,247,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+#app{position:relative;z-index:1;}
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
 
-  /* GRID NOISE BACKGROUND */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(124,106,247,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(124,106,247,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none; z-index: 0;
-  }
+/* UPLOAD */
+#screen-upload{align-items:center;justify-content:center;padding:2rem;}
+.upload-wrap{width:100%;max-width:680px;}
+.logo{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;letter-spacing:-2px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.25rem;}
+.tagline{color:var(--muted);font-size:.8rem;margin-bottom:2.5rem;letter-spacing:2px;text-transform:uppercase;}
+.drop-zone{border:1.5px dashed var(--border);border-radius:var(--radius);padding:3rem 2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:1.5rem;}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--accent);background:rgba(124,106,247,.05);}
+.drop-zone .icon{font-size:2.5rem;margin-bottom:1rem;opacity:.6;}
+.drop-zone p{color:var(--muted);font-size:.85rem;line-height:1.8;}
+.drop-zone strong{color:var(--text);}
+#file-input{display:none;}
+.divider{display:flex;align-items:center;gap:1rem;color:var(--muted);font-size:.75rem;margin:1.5rem 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+#guide-text{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;resize:vertical;min-height:200px;outline:none;transition:border-color .2s;line-height:1.7;}
+#guide-text:focus{border-color:var(--accent);}
+#guide-text::placeholder{color:var(--muted);}
+.format-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0;}
+.pill{font-size:.72rem;padding:3px 10px;border:1px solid var(--border);border-radius:999px;color:var(--muted);background:var(--surface);}
+.btn-primary{width:100%;padding:.9rem;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:.5px;}
+.btn-primary:hover{opacity:.9;}
+.btn-primary:active{transform:scale(.99);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
 
-  #app { position: relative; z-index: 1; }
+/* HOME SCREEN */
+#screen-home{padding:0;}
+.home-header{padding:1.25rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;}
+.home-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-1px;color:var(--accent);}
+.home-topic{color:var(--muted);font-size:.75rem;flex:1;}
+.btn-sm{padding:.4rem .9rem;border-radius:8px;font-size:.75rem;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-family:'DM Mono',monospace;transition:border-color .2s;}
+.btn-sm:hover{border-color:var(--accent);}
+.home-body{padding:2rem;overflow-y:auto;flex:1;}
 
-  /* ── SCREENS ── */
-  .screen { display: none; min-height: 100vh; }
-  .screen.active { display: flex; flex-direction: column; }
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:2rem;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;}
+.stat-card .lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem;}
+.stat-card .val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700;}
+.val.c-accent{color:var(--accent);}
+.val.c-success{color:var(--success);}
+.val.c-warn{color:var(--warn);}
+.val.c-danger{color:var(--danger);}
 
-  /* ── UPLOAD SCREEN ── */
-  #screen-upload {
-    align-items: center; justify-content: center;
-    padding: 2rem;
-  }
-  .upload-wrap { width: 100%; max-width: 680px; }
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.8rem; font-weight: 800;
-    letter-spacing: -2px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 0.25rem;
-  }
-  .tagline { color: var(--muted); font-size: 0.8rem; margin-bottom: 2.5rem; letter-spacing: 2px; text-transform: uppercase; }
+/* SECTION GRID */
+.section-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:1rem;}
+.mode-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem;}
+.mode-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;cursor:pointer;transition:border-color .2s,background .2s;display:flex;flex-direction:column;gap:.75rem;}
+.mode-card:hover{border-color:var(--accent);background:rgba(124,106,247,.04);}
+.mode-card .mc-icon{font-size:1.8rem;line-height:1;}
+.mode-card .mc-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;}
+.mode-card .mc-desc{font-size:.75rem;color:var(--muted);line-height:1.6;}
+.mode-card .mc-badge{font-size:.65rem;padding:3px 9px;border-radius:999px;width:fit-content;}
+.badge-purple{background:rgba(124,106,247,.15);color:var(--accent);}
+.badge-teal{background:rgba(78,205,196,.15);color:var(--accent2);}
+.badge-yellow{background:rgba(255,217,61,.15);color:var(--accent4);}
+.badge-red{background:rgba(255,107,107,.15);color:var(--accent3);}
 
-  .drop-zone {
-    border: 1.5px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 3rem 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    margin-bottom: 1.5rem;
-  }
-  .drop-zone:hover, .drop-zone.drag { border-color: var(--accent); background: rgba(124,106,247,0.05); }
-  .drop-zone .icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.6; }
-  .drop-zone p { color: var(--muted); font-size: 0.85rem; line-height: 1.8; }
-  .drop-zone strong { color: var(--text); }
-  #file-input { display: none; }
+/* CONCEPT HEATMAP */
+.concept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:2rem;}
+.concept-chip{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;font-size:.72rem;}
+.concept-chip .cn{margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.concept-chip .cp{font-size:.65rem;color:var(--muted);}
+.chip-weak{border-left:3px solid var(--danger);}
+.chip-med{border-left:3px solid var(--warn);}
+.chip-good{border-left:3px solid var(--success);}
+.progress-wrap{background:var(--surface3);border-radius:999px;height:4px;overflow:hidden;margin-top:.3rem;}
+.progress-fill{height:100%;border-radius:999px;transition:width .4s;}
 
-  .divider { display: flex; align-items: center; gap: 1rem; color: var(--muted); font-size: 0.75rem; margin: 1.5rem 0; }
-  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* STUDY SCREEN */
+#screen-study{padding:0;}
+.study-header{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;}
+.study-mode-label{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;}
+.study-progress{flex:1;display:flex;align-items:center;gap:.75rem;}
+.study-prog-bar{flex:1;background:var(--surface3);border-radius:999px;height:4px;overflow:hidden;}
+.study-prog-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .3s;}
+.study-prog-txt{font-size:.72rem;color:var(--muted);white-space:nowrap;}
+.study-body{padding:2rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:1.25rem;max-width:760px;margin:0 auto;width:100%;}
 
-  #guide-text {
-    width: 100%; background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 1rem 1.25rem;
-    color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.8rem;
-    resize: vertical; min-height: 200px; outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.7;
-  }
-  #guide-text:focus { border-color: var(--accent); }
-  #guide-text::placeholder { color: var(--muted); }
+/* QUESTION CARD */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.75rem;}
+.q-card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;}
+.q-type-badge{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;padding:4px 10px;border-radius:999px;}
+.q-concept{font-size:.72rem;color:var(--muted);margin-left:auto;}
+.q-text{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:600;line-height:1.55;margin-bottom:1.25rem;}
 
-  .format-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
-  .pill {
-    font-size: 0.72rem; padding: 3px 10px;
-    border: 1px solid var(--border); border-radius: 999px;
-    color: var(--muted); background: var(--surface);
-  }
+/* MCQ */
+.mcq-options{display:flex;flex-direction:column;gap:.5rem;}
+.mcq-opt{padding:.75rem 1rem;border-radius:10px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:.83rem;line-height:1.5;transition:all .15s;text-align:left;font-family:'DM Mono',monospace;color:var(--text);}
+.mcq-opt:hover:not(:disabled){border-color:var(--accent);background:rgba(124,106,247,.08);}
+.mcq-opt.correct{border-color:var(--success);background:rgba(78,205,196,.1);color:var(--success);}
+.mcq-opt.wrong{border-color:var(--danger);background:rgba(255,107,107,.1);color:var(--danger);}
+.mcq-opt:disabled{cursor:default;}
 
-  .btn-primary {
-    width: 100%; padding: 0.9rem;
-    background: var(--accent); border: none; border-radius: var(--radius);
-    color: #fff; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
-    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
-    letter-spacing: 0.5px;
-  }
-  .btn-primary:hover { opacity: 0.9; }
-  .btn-primary:active { transform: scale(0.99); }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+/* RECALL */
+.recall-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;color:var(--text);font-family:'DM Mono',monospace;font-size:.83rem;resize:vertical;min-height:110px;outline:none;transition:border-color .2s;line-height:1.7;}
+.recall-input:focus{border-color:var(--accent);}
+.btn-row{display:flex;gap:.6rem;margin-top:.75rem;flex-wrap:wrap;}
 
-  /* ── DASHBOARD ── */
-  #screen-dashboard { padding: 0; }
-  .dash-header {
-    padding: 1.5rem 2rem 1rem;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 1rem;
-  }
-  .dash-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; letter-spacing: -1px; color: var(--accent); }
-  .dash-subtitle { color: var(--muted); font-size: 0.75rem; flex: 1; }
-  .btn-sm {
-    padding: 0.4rem 0.9rem; border-radius: 8px; font-size: 0.75rem;
-    border: 1px solid var(--border); background: var(--surface2);
-    color: var(--text); cursor: pointer; font-family: 'DM Mono', monospace;
-    transition: border-color 0.2s;
-  }
-  .btn-sm:hover { border-color: var(--accent); }
+/* BLANKS */
+.blanks-text{font-size:.95rem;line-height:2.4;}
+.blank-input{display:inline-block;background:var(--surface2);border:none;border-bottom:2px solid var(--accent);color:var(--accent);font-family:'DM Mono',monospace;font-size:.9rem;padding:0 4px;outline:none;min-width:60px;text-align:center;}
+.blank-input.correct{border-color:var(--success);color:var(--success);}
+.blank-input.wrong{border-color:var(--danger);color:var(--danger);}
 
-  .dash-body { display: grid; grid-template-columns: 280px 1fr; flex: 1; overflow: hidden; height: calc(100vh - 65px); }
+/* LEARN */
+.learn-card{background:var(--surface2);border-radius:12px;padding:1.25rem;border-left:3px solid var(--accent);font-size:.85rem;line-height:1.8;}
+.learn-term{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.5rem;color:var(--accent2);}
 
-  /* SIDEBAR */
-  .sidebar {
-    border-right: 1px solid var(--border);
-    background: var(--surface);
-    overflow-y: auto;
-    padding: 1.25rem;
-    display: flex; flex-direction: column; gap: 1.25rem;
-  }
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-  .stat-card {
-    background: var(--surface2); border-radius: 10px;
-    padding: 0.75rem; border: 1px solid var(--border);
-  }
-  .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; }
-  .stat-card .value { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; }
-  .stat-card .value.accent { color: var(--accent); }
-  .stat-card .value.success { color: var(--success); }
-  .stat-card .value.warn { color: var(--warn); }
-  .stat-card .value.danger { color: var(--danger); }
+/* FEEDBACK */
+.feedback-box{padding:.9rem 1.1rem;border-radius:10px;margin-top:.9rem;font-size:.8rem;line-height:1.6;display:none;}
+.feedback-box.show{display:block;}
+.feedback-box.correct{background:rgba(78,205,196,.1);border:1px solid rgba(78,205,196,.3);color:var(--success);}
+.feedback-box.partial{background:rgba(255,217,61,.1);border:1px solid rgba(255,217,61,.3);color:var(--accent4);}
+.feedback-box.incorrect{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:var(--danger);}
 
-  .section-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem; }
+/* RATING */
+.rating-row{display:flex;gap:.5rem;margin-top:.9rem;flex-wrap:wrap;}
+.rating-btn{flex:1;min-width:48px;padding:.55rem .3rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .15s;text-align:center;display:none;}
+.rating-btn.show{display:block;}
+.rating-btn[data-q="0"]{border-color:var(--danger);}
+.rating-btn[data-q="1"]{border-color:#ff9f43;}
+.rating-btn[data-q="2"]{border-color:var(--warn);}
+.rating-btn[data-q="3"]{border-color:#a8e063;}
+.rating-btn[data-q="4"]{border-color:var(--success);}
+.rating-btn[data-q="5"]{border-color:var(--accent);}
+.rating-btn:hover{background:var(--surface3);}
 
-  /* CONCEPT HEAT MAP */
-  .concept-list { display: flex; flex-direction: column; gap: 0.4rem; }
-  .concept-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.5rem 0.7rem; border-radius: 8px;
-    background: var(--surface3); cursor: pointer;
-    transition: background 0.15s;
-    border: 1px solid transparent;
-  }
-  .concept-item:hover { border-color: var(--accent); }
-  .concept-item.weak { border-left: 3px solid var(--danger); }
-  .concept-item.medium { border-left: 3px solid var(--warn); }
-  .concept-item.strong { border-left: 3px solid var(--success); }
-  .concept-name { font-size: 0.75rem; flex: 1; }
-  .concept-score { font-size: 0.7rem; color: var(--muted); }
+.btn-action{padding:.6rem 1.4rem;border-radius:8px;border:none;background:var(--accent);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;transition:opacity .2s;}
+.btn-action:hover{opacity:.85;}
+.btn-action.sec{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
 
-  /* PROGRESS BAR */
-  .progress-wrap { background: var(--surface3); border-radius: 999px; height: 5px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 999px; transition: width 0.4s; }
+/* DONE CARD */
+.done-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center;}
+.done-emoji{font-size:2.5rem;margin-bottom:.5rem;}
+.done-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:.4rem;}
+.done-sub{color:var(--muted);font-size:.8rem;margin-bottom:1.5rem;}
+.done-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.done-stat{background:var(--surface2);border-radius:10px;padding:.9rem;}
+.done-stat .dn{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;}
+.done-stat .dl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:.2rem;}
 
-  /* MAIN STUDY AREA */
-  .main-area { overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
-
-  /* MODE SELECTOR */
-  .mode-tabs { display: flex; gap: 0.5rem; }
-  .mode-tab {
-    padding: 0.5rem 1.2rem; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface2);
-    color: var(--muted); font-size: 0.78rem; cursor: pointer;
-    font-family: 'DM Mono', monospace;
-    transition: all 0.15s;
-  }
-  .mode-tab:hover { color: var(--text); border-color: var(--accent); }
-  .mode-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-  /* STUDY CARD */
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 2rem;
-  }
-  .card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-  .card-type {
-    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px;
-    padding: 4px 10px; border-radius: 999px;
-  }
-  .card-type.recall { background: rgba(124,106,247,0.15); color: var(--accent); }
-  .card-type.mcq { background: rgba(78,205,196,0.15); color: var(--accent2); }
-  .card-type.blanks { background: rgba(255,217,61,0.15); color: var(--accent4); }
-  .card-type.review { background: rgba(255,107,107,0.15); color: var(--accent3); }
-  .card-type.explain { background: rgba(124,106,247,0.15); color: var(--accent); }
-
-  .queue-info { font-size: 0.72rem; color: var(--muted); margin-left: auto; }
-
-  .question-text {
-    font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 600;
-    line-height: 1.5; margin-bottom: 1.5rem;
-    color: var(--text);
-  }
-  .question-hint { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; font-style: italic; }
-
-  /* MCQ */
-  .mcq-options { display: flex; flex-direction: column; gap: 0.6rem; }
-  .mcq-option {
-    padding: 0.8rem 1rem; border-radius: 10px;
-    border: 1px solid var(--border); background: var(--surface2);
-    cursor: pointer; font-size: 0.85rem; line-height: 1.5;
-    transition: all 0.15s; text-align: left;
-    font-family: 'DM Mono', monospace; color: var(--text);
-  }
-  .mcq-option:hover:not(:disabled) { border-color: var(--accent); background: rgba(124,106,247,0.08); }
-  .mcq-option.correct { border-color: var(--success); background: rgba(78,205,196,0.1); color: var(--success); }
-  .mcq-option.wrong { border-color: var(--danger); background: rgba(255,107,107,0.1); color: var(--danger); }
-  .mcq-option:disabled { cursor: default; }
-
-  /* FREE RECALL */
-  .recall-input {
-    width: 100%; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 1rem; color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 0.85rem;
-    resize: vertical; min-height: 120px; outline: none;
-    transition: border-color 0.2s; line-height: 1.7;
-  }
-  .recall-input:focus { border-color: var(--accent); }
-
-  /* FILL BLANKS */
-  .blanks-text { font-size: 1rem; line-height: 2.2; }
-  .blank-input {
-    display: inline-block; background: var(--surface2);
-    border: none; border-bottom: 2px solid var(--accent);
-    color: var(--accent); font-family: 'DM Mono', monospace;
-    font-size: 0.9rem; padding: 0 4px; outline: none;
-    min-width: 80px; text-align: center;
-  }
-  .blank-input.correct { border-color: var(--success); color: var(--success); }
-  .blank-input.wrong { border-color: var(--danger); color: var(--danger); }
-
-  /* FEEDBACK */
-  .feedback-box {
-    padding: 1rem 1.25rem; border-radius: 10px; margin-top: 1rem;
-    font-size: 0.82rem; line-height: 1.6;
-    display: none;
-  }
-  .feedback-box.show { display: block; }
-  .feedback-box.correct { background: rgba(78,205,196,0.1); border: 1px solid rgba(78,205,196,0.3); color: var(--success); }
-  .feedback-box.partial { background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.3); color: var(--accent4); }
-  .feedback-box.incorrect { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); color: var(--accent3); }
-
-  /* RATING BUTTONS */
-  .rating-row { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
-  .rating-btn {
-    flex: 1; padding: 0.6rem;
-    border-radius: 8px; border: 1px solid var(--border);
-    background: var(--surface2); color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 0.75rem;
-    cursor: pointer; transition: all 0.15s; text-align: center;
-    display: none;
-  }
-  .rating-btn.show { display: block; }
-  .rating-btn[data-q="0"] { border-color: var(--danger); }
-  .rating-btn[data-q="1"] { border-color: #ff9f43; }
-  .rating-btn[data-q="2"] { border-color: var(--warn); }
-  .rating-btn[data-q="3"] { border-color: #a8e063; }
-  .rating-btn[data-q="4"] { border-color: var(--success); }
-  .rating-btn[data-q="5"] { border-color: var(--accent); }
-  .rating-btn:hover { background: var(--surface3); }
-
-  .btn-action {
-    padding: 0.65rem 1.5rem; border-radius: 8px;
-    border: none; background: var(--accent); color: #fff;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem;
-    cursor: pointer; transition: opacity 0.2s;
-  }
-  .btn-action:hover { opacity: 0.85; }
-  .btn-action.secondary {
-    background: var(--surface2); color: var(--text);
-    border: 1px solid var(--border);
-  }
-
-  /* EXPLAIN MODE */
-  .explain-area { display: flex; flex-direction: column; gap: 1rem; }
-  .explain-answer {
-    background: var(--surface2); border-radius: 10px;
-    padding: 1.25rem; font-size: 0.83rem; line-height: 1.8;
-    border-left: 3px solid var(--accent);
-    display: none;
-  }
-  .explain-answer.show { display: block; }
-
-  /* MASTERY BAR */
-  .mastery-section { }
-  .mastery-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
-  .mastery-label { font-size: 0.75rem; color: var(--muted); width: 120px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mastery-bar { flex: 1; height: 6px; background: var(--surface3); border-radius: 999px; overflow: hidden; }
-  .mastery-fill { height: 100%; border-radius: 999px; transition: width 0.5s; }
-
-  /* REVIEW SCREEN */
-  #screen-review { padding: 2rem; align-items: center; }
-  .review-card {
-    max-width: 600px; width: 100%;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 20px; padding: 2.5rem;
-    text-align: center;
-  }
-  .review-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
-  .review-subtitle { color: var(--muted); font-size: 0.82rem; margin-bottom: 2rem; }
-  .review-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
-  .review-stat { background: var(--surface2); border-radius: 12px; padding: 1rem; }
-  .review-stat .n { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; }
-  .review-stat .l { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.2rem; }
-  .weak-list { text-align: left; margin-bottom: 2rem; }
-  .weak-list h4 { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem; }
-  .weak-tag {
-    display: inline-block; margin: 0.25rem;
-    background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3);
-    color: var(--danger); font-size: 0.75rem; padding: 4px 10px; border-radius: 999px;
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .fade-in { animation: fadeIn 0.3s ease forwards; }
-  @keyframes flash-correct { 0%,100% { background: var(--surface); } 50% { background: rgba(78,205,196,0.08); } }
-  @keyframes flash-wrong { 0%,100% { background: var(--surface); } 50% { background: rgba(255,107,107,0.08); } }
-  .flash-c { animation: flash-correct 0.4s ease; }
-  .flash-w { animation: flash-wrong 0.4s ease; }
-
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--surface); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeUp .28s ease forwards;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:999px;}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- ══════════════════════════════════════════
-     SCREEN 1 — UPLOAD
-══════════════════════════════════════════ -->
+<!-- ══ UPLOAD ══ -->
 <div id="screen-upload" class="screen active">
   <div class="upload-wrap">
     <div class="logo">StudyEngine</div>
     <div class="tagline">Adaptive Learning · Pure Algorithms</div>
-
     <div class="drop-zone" id="drop-zone">
       <div class="icon">⬆</div>
       <p><strong>Drop any file here</strong><br>
-      .txt · .md · .pdf (text) · .docx (text) · .csv · .json · or any plain text<br>
-      <br>
-      <span style="font-size:0.75rem">or paste your notes below</span></p>
+      .txt · .md · any plain text file<br><br>
+      <span style="font-size:.75rem">or paste your notes below</span></p>
       <input type="file" id="file-input" accept="*/*">
     </div>
-
     <div class="divider">or paste your study guide</div>
-
-    <textarea id="guide-text" placeholder="Paste your notes here — any format works.
-Bullet points, paragraphs, Q&A pairs, definitions, tables...
-
-Examples:
-• Mitosis: process of cell division
-• Newton's 1st Law: An object at rest stays at rest
-Q: What is photosynthesis? A: Conversion of light to glucose
-Vocab: Osmosis = movement of water across membrane"></textarea>
-
+    <textarea id="guide-text" placeholder="Paste notes in any format:
+• Bullet points, paragraphs, Q&A pairs
+• Term: definition lines
+• Numbered lists, markdown, tables
+• Slang, informal notes, anything goes"></textarea>
     <div class="format-pills">
-      <span class="pill">bullet points</span>
-      <span class="pill">Q&amp;A pairs</span>
-      <span class="pill">definitions</span>
-      <span class="pill">paragraphs</span>
-      <span class="pill">markdown</span>
-      <span class="pill">tables</span>
-      <span class="pill">numbered lists</span>
-      <span class="pill">flashcard CSV</span>
+      <span class="pill">bullet points</span><span class="pill">Q&amp;A pairs</span>
+      <span class="pill">definitions</span><span class="pill">paragraphs</span>
+      <span class="pill">markdown</span><span class="pill">flashcard CSV</span>
     </div>
-
     <button class="btn-primary" id="btn-start" disabled>Parse &amp; Build Study Deck →</button>
-    <div id="parse-error" style="color:var(--danger);font-size:0.78rem;margin-top:0.75rem;display:none;"></div>
+    <div id="parse-error" style="color:var(--danger);font-size:.78rem;margin-top:.75rem;display:none;"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 2 — DASHBOARD
-══════════════════════════════════════════ -->
-<div id="screen-dashboard" class="screen">
-  <div class="dash-header">
-    <div class="dash-logo">StudyEngine</div>
-    <div class="dash-subtitle" id="dash-topic">—</div>
+<!-- ══ HOME ══ -->
+<div id="screen-home" class="screen">
+  <div class="home-header">
+    <div class="home-logo">StudyEngine</div>
+    <div class="home-topic" id="home-topic">—</div>
     <button class="btn-sm" id="btn-restart">↩ New Guide</button>
   </div>
-  <div class="dash-body">
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div>
-        <div class="section-label">Session Stats</div>
-        <div class="stat-grid">
-          <div class="stat-card"><div class="label">Cards</div><div class="value accent" id="stat-total">0</div></div>
-          <div class="stat-card"><div class="label">Due Now</div><div class="value warn" id="stat-due">0</div></div>
-          <div class="stat-card"><div class="label">Mastered</div><div class="value success" id="stat-mastered">0</div></div>
-          <div class="stat-card"><div class="label">Accuracy</div><div class="value" id="stat-acc">—</div></div>
-        </div>
-      </div>
+  <div class="home-body">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="lbl">Total Cards</div><div class="val c-accent" id="st-total">0</div></div>
+      <div class="stat-card"><div class="lbl">Mastered</div><div class="val c-success" id="st-mastered">0</div></div>
+      <div class="stat-card"><div class="lbl">Need Work</div><div class="val c-danger" id="st-weak">0</div></div>
+      <div class="stat-card"><div class="lbl">Accuracy</div><div class="val c-warn" id="st-acc">—</div></div>
+    </div>
 
-      <div>
-        <div class="section-label">Overall Mastery</div>
-        <div class="progress-wrap" style="margin-bottom:0.4rem">
-          <div class="progress-fill" id="overall-bar" style="width:0%;background:var(--accent)"></div>
-        </div>
-        <div style="font-size:0.72rem;color:var(--muted)" id="overall-pct">0% mastered</div>
+    <!-- Mode Cards -->
+    <div class="section-label">Choose a Study Mode</div>
+    <div class="mode-grid">
+      <div class="mode-card" data-mode="learn">
+        <div class="mc-icon">📖</div>
+        <div class="mc-title">Learn</div>
+        <div class="mc-desc">See each concept explained from scratch. Best starting point if you know nothing.</div>
+        <div class="mc-badge badge-teal">Start here</div>
       </div>
-
-      <div>
-        <div class="section-label">Concept Heatmap</div>
-        <div class="concept-list" id="concept-list"></div>
+      <div class="mode-card" data-mode="mcq">
+        <div class="mc-icon">🔘</div>
+        <div class="mc-title">Multiple Choice</div>
+        <div class="mc-desc">4 options, pick the right one. Fast-paced recognition testing.</div>
+        <div class="mc-badge badge-purple">Recognition</div>
       </div>
-
-      <div>
-        <div class="section-label">Weak Areas</div>
-        <div id="weak-list" style="font-size:0.75rem;color:var(--muted);line-height:1.8">—</div>
+      <div class="mode-card" data-mode="blanks">
+        <div class="mc-icon">✏️</div>
+        <div class="mc-title">Fill in the Blank</div>
+        <div class="mc-desc">Key terms are blanked out. Type what's missing without any hints.</div>
+        <div class="mc-badge badge-yellow">Active recall</div>
+      </div>
+      <div class="mode-card" data-mode="recall">
+        <div class="mc-icon">💭</div>
+        <div class="mc-title">Free Recall</div>
+        <div class="mc-desc">Write everything you know. Scored by keyword coverage — hardest mode.</div>
+        <div class="mc-badge badge-red">Hardest</div>
+      </div>
+      <div class="mode-card" data-mode="adaptive">
+        <div class="mc-icon">🧠</div>
+        <div class="mc-title">Adaptive (SM-2)</div>
+        <div class="mc-desc">Spaced repetition picks what to study based on your weak spots. Best long-term retention.</div>
+        <div class="mc-badge badge-purple">Recommended</div>
+      </div>
+      <div class="mode-card" data-mode="weak">
+        <div class="mc-icon">⚠️</div>
+        <div class="mc-title">Weak Areas Only</div>
+        <div class="mc-desc">Drill only the cards you got wrong or rated low. Fix your gaps fast.</div>
+        <div class="mc-badge badge-red">Targeted</div>
       </div>
     </div>
 
-    <!-- MAIN STUDY AREA -->
-    <div class="main-area" id="main-area">
-      <div>
-        <div class="section-label" style="margin-bottom:0.75rem">Study Mode</div>
-        <div class="mode-tabs">
-          <button class="mode-tab active" data-mode="adaptive">🧠 Adaptive</button>
-          <button class="mode-tab" data-mode="recall">💭 Free Recall</button>
-          <button class="mode-tab" data-mode="mcq">🔘 Multiple Choice</button>
-          <button class="mode-tab" data-mode="blanks">✏️ Fill Blanks</button>
-          <button class="mode-tab" data-mode="explain">📖 Explain It</button>
-        </div>
-      </div>
-
-      <!-- QUESTION CARD -->
-      <div class="card fade-in" id="q-card">
-        <div class="card-header">
-          <span class="card-type recall" id="q-type-badge">Recall</span>
-          <span class="queue-info" id="q-queue-info"></span>
-        </div>
-        <div class="question-text" id="q-text">Loading question...</div>
-        <div class="question-hint" id="q-hint" style="display:none"></div>
-
-        <!-- MCQ -->
-        <div id="mcq-area" style="display:none">
-          <div class="mcq-options" id="mcq-options"></div>
-        </div>
-
-        <!-- Free Recall -->
-        <div id="recall-area" style="display:none">
-          <textarea class="recall-input" id="recall-input" placeholder="Type everything you know about this..."></textarea>
-          <div style="display:flex;gap:0.6rem;margin-top:0.75rem">
-            <button class="btn-action" id="btn-submit-recall">Check Answer</button>
-            <button class="btn-action secondary" id="btn-reveal">Reveal Answer</button>
-          </div>
-        </div>
-
-        <!-- Fill Blanks -->
-        <div id="blanks-area" style="display:none">
-          <div class="blanks-text" id="blanks-text"></div>
-          <div style="margin-top:1rem">
-            <button class="btn-action" id="btn-check-blanks">Check</button>
-          </div>
-        </div>
-
-        <!-- Explain -->
-        <div id="explain-area" style="display:none">
-          <div style="display:flex;gap:0.6rem;margin-bottom:0.75rem">
-            <button class="btn-action" id="btn-show-explain">Show Explanation</button>
-            <button class="btn-action secondary" id="btn-next-explain">Next →</button>
-          </div>
-          <div class="explain-answer" id="explain-answer"></div>
-        </div>
-
-        <!-- Feedback -->
-        <div class="feedback-box" id="feedback-box"></div>
-
-        <!-- SM-2 Rating -->
-        <div class="rating-row" id="rating-row">
-          <button class="rating-btn" data-q="0">0<br><span style="color:var(--muted);font-size:0.65rem">Blank</span></button>
-          <button class="rating-btn" data-q="1">1<br><span style="color:var(--muted);font-size:0.65rem">Wrong</span></button>
-          <button class="rating-btn" data-q="2">2<br><span style="color:var(--muted);font-size:0.65rem">Hard</span></button>
-          <button class="rating-btn" data-q="3">3<br><span style="color:var(--muted);font-size:0.65rem">Ok</span></button>
-          <button class="rating-btn" data-q="4">4<br><span style="color:var(--muted);font-size:0.65rem">Good</span></button>
-          <button class="rating-btn" data-q="5">5<br><span style="color:var(--muted);font-size:0.65rem">Easy</span></button>
-        </div>
-      </div>
-
-      <!-- MASTERY BREAKDOWN -->
-      <div class="card" id="mastery-card">
-        <div class="section-label" style="margin-bottom:1rem">Per-Concept Mastery</div>
-        <div id="mastery-bars"></div>
-      </div>
-
-      <!-- NEXT DUE -->
-      <div class="card" id="schedule-card" style="display:none">
-        <div class="section-label" style="margin-bottom:0.75rem">Session Complete 🎉</div>
-        <p style="font-size:0.85rem;color:var(--muted);line-height:1.7">
-          All cards reviewed. Come back when new cards are due, or pick a mode above to keep drilling.
-        </p>
-        <button class="btn-action" style="margin-top:1rem" id="btn-keep-drilling">Keep Drilling →</button>
-      </div>
-    </div>
+    <!-- Concept Heatmap -->
+    <div class="section-label">Concept Heatmap</div>
+    <div class="concept-grid" id="concept-grid"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 3 — SESSION REVIEW
-══════════════════════════════════════════ -->
-<div id="screen-review" class="screen">
-  <div class="review-card fade-in">
-    <div class="review-title" id="rv-emoji">🎓</div>
-    <div class="review-title" id="rv-title">Session Done</div>
-    <div class="review-subtitle" id="rv-sub">Here's how you did</div>
-    <div class="review-stats">
-      <div class="review-stat"><div class="n" id="rv-correct" style="color:var(--success)">0</div><div class="l">Correct</div></div>
-      <div class="review-stat"><div class="n" id="rv-wrong" style="color:var(--danger)">0</div><div class="l">Missed</div></div>
-      <div class="review-stat"><div class="n" id="rv-acc" style="color:var(--accent)">0%</div><div class="l">Accuracy</div></div>
+<!-- ══ STUDY ══ -->
+<div id="screen-study" class="screen">
+  <div class="study-header">
+    <button class="btn-sm" id="btn-back-home">← Home</button>
+    <div class="study-mode-label" id="study-mode-label">Mode</div>
+    <div class="study-progress">
+      <div class="study-prog-bar"><div class="study-prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="study-prog-txt" id="prog-txt">0 / 0</div>
     </div>
-    <div class="weak-list" id="rv-weak-list"></div>
-    <div style="display:flex;gap:0.75rem">
-      <button class="btn-action" id="btn-study-again">Study Again →</button>
-      <button class="btn-action secondary" id="btn-new-guide">New Guide</button>
-    </div>
+    <button class="btn-sm" id="btn-end-session">End Session</button>
+  </div>
+  <div class="study-body" id="study-body">
+    <!-- injected by JS -->
   </div>
 </div>
 
-</div><!-- #app -->
-
+</div>
 <script>
-// ════════════════════════════════════════════════════════
-//  STUDYENGINE — Pure Algorithm Study System
-//  Algorithms: SM-2 Spaced Repetition, TF-IDF keyword
-//  extraction, Levenshtein fuzzy match, adaptive card
-//  selection, concept graph, mastery scoring
-// ════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  StudyEngine — Pure Algorithm Study System
+//  SM-2 spaced repetition · TF-IDF keyword extraction
+//  Levenshtein fuzzy match · Adaptive card scheduling
+// ═══════════════════════════════════════════════════════════
 
-// ── UTILS ──────────────────────────────────────────────
 const $ = id => document.getElementById(id);
-const show = id => $(id).style.display = '';
-const hide = id => $(id).style.display = 'none';
 
-// Levenshtein distance for fuzzy matching
-function levenshtein(a, b) {
-  const m = a.length, n = b.length;
-  const dp = Array.from({length: m+1}, (_,i) => [i, ...Array(n).fill(0)]);
-  for (let j=0; j<=n; j++) dp[0][j] = j;
-  for (let i=1; i<=m; i++) for (let j=1; j<=n; j++) {
-    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1]
-      : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
-  }
+// ── STOPWORDS ───────────────────────────────────────────────
+const SW = new Set('a an the is are was were be been being have has had do does did will would could should may might shall can need to of in for on with at by from as into through during before after above below between out off over under again further then once and but or so yet both either neither not nor very just about also it its this that these those he she they we you i me him her us them what which who when where why how all any each few more most other some such than too only'.split(' '));
+
+function tokenize(t){
+  return t.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2&&!SW.has(w));
+}
+
+// ── TF-IDF ──────────────────────────────────────────────────
+function tfIdf(docs){
+  const N=docs.length, df={};
+  docs.forEach(d=>{new Set(tokenize(d)).forEach(w=>{df[w]=(df[w]||0)+1;});});
+  return docs.map(d=>{
+    const tokens=tokenize(d), tf={};
+    tokens.forEach(w=>{tf[w]=(tf[w]||0)+1;});
+    const scores={};
+    Object.keys(tf).forEach(w=>{scores[w]=(tf[w]/tokens.length)*Math.log((N+1)/((df[w]||0)+1));});
+    return Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,6).map(e=>e[0]);
+  });
+}
+
+// ── LEVENSHTEIN ─────────────────────────────────────────────
+function lev(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
+  for(let j=0;j<=n;j++)dp[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
   return dp[m][n];
 }
-
-// Fuzzy string match score 0–1
-function fuzzyScore(answer, key) {
-  const a = answer.toLowerCase().trim();
-  const k = key.toLowerCase().trim();
-  if (!a || !k) return 0;
-  if (a === k) return 1;
-  if (a.includes(k) || k.includes(a)) return 0.9;
-  const dist = levenshtein(a, k);
-  return Math.max(0, 1 - dist / Math.max(a.length, k.length));
+function fuzzy(a,k){
+  const A=a.toLowerCase().trim(),K=k.toLowerCase().trim();
+  if(!A||!K)return 0;
+  if(A===K)return 1;
+  if(A.includes(K)||K.includes(A))return 0.9;
+  return Math.max(0,1-lev(A,K)/Math.max(A.length,K.length));
 }
 
-// Tokenise text into lowercase words, strip stopwords
-const STOPWORDS = new Set(['a','an','the','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','shall','can','need','dare','ought','used','to','of','in','for','on','with','at','by','from','as','into','through','during','before','after','above','below','between','out','off','over','under','again','further','then','once','and','but','or','so','yet','both','either','neither','not','nor','very','just','about','also','it','its','this','that','these','those','he','she','they','we','you','i','me','him','her','us','them','what','which','who','when','where','why','how','all','any','each','few','more','most','other','some','such','than','too','only']);
-
-function tokenize(text) {
-  return text.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w => w.length > 2 && !STOPWORDS.has(w));
-}
-
-// TF-IDF: find important keywords in a doc relative to corpus
-function tfIdf(docs) {
-  const N = docs.length;
-  const df = {};
-  docs.forEach(doc => {
-    const unique = new Set(tokenize(doc));
-    unique.forEach(w => { df[w] = (df[w]||0)+1; });
-  });
-  return docs.map(doc => {
-    const tokens = tokenize(doc);
-    const tf = {};
-    tokens.forEach(w => { tf[w] = (tf[w]||0)+1; });
-    const scores = {};
-    Object.keys(tf).forEach(w => {
-      const tfidf = (tf[w]/tokens.length) * Math.log((N+1)/(df[w]+1));
-      scores[w] = tfidf;
-    });
-    // return top 5 keywords
-    return Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,5).map(e=>e[0]);
-  });
-}
-
-// \u2500\u2500 CLOZE TARGET SELECTION \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-// Picks the single best word to blank in a cloze sentence.
-// Strategy: score each unique content word in the text by several signals,
-// return the highest-scoring one that actually appears in the sentence.
-function pickClozeTarget(text, tfidfKws) {
-  // Extract actual word tokens that appear literally in the text
-  // (preserve original casing for replacement later)
-  const wordRe = /[a-zA-Z][a-zA-Z'-]{2,}/g;
-  const found = {};
+// ── CLOZE TARGET PICKER ─────────────────────────────────────
+// Only called on SHORT sentences (≤ 12 words). Picks the single
+// most meaningful word to blank: penalises numbers, very short
+// words, prefers longer content words ranked high by TF-IDF.
+function pickClozeTarget(text, kws){
+  const wordRe=/[a-zA-Z][a-zA-Z'-]{2,}/g;
+  const found={};
   let m;
-  while ((m = wordRe.exec(text)) !== null) {
-    const w = m[0];
-    const lw = w.toLowerCase();
-    if (STOPWORDS.has(lw)) continue;
-    if (!found[lw]) found[lw] = { orig: w, count: 0, pos: m.index };
+  while((m=wordRe.exec(text))!==null){
+    const w=m[0],lw=w.toLowerCase();
+    if(SW.has(lw))continue;
+    if(!found[lw])found[lw]={orig:w,count:0,pos:m.index};
     found[lw].count++;
   }
-
-  const totalWords = Object.keys(found).length;
-  if (totalWords === 0) return null;
-
-  // Build tfidf rank map (lower rank = more important)
-  const tfidfRank = {};
-  tfidfKws.forEach((kw, i) => { tfidfRank[kw.toLowerCase()] = i; });
-
-  let best = null, bestScore = -Infinity;
-
-  Object.entries(found).forEach(([lw, info]) => {
-    let score = 0;
-
-    // 1. TF-IDF importance: top keyword gets highest bonus
-    const rank = tfidfRank[lw];
-    if (rank !== undefined) score += (tfidfKws.length - rank) * 4;
-
-    // 2. Penalise pure numbers and symbols heavily
-    if (/^\d+$/.test(info.orig)) { score -= 50; return; }
-    if (/^[^a-zA-Z]+$/.test(info.orig)) { score -= 50; return; }
-
-    // 3. Prefer longer, more specific words (likely nouns/concepts)
-    score += Math.min(info.orig.length - 3, 6);  // up to +6 for 9+ char words
-
-    // 4. Penalise very short words (likely filler even after stopword filter)
-    if (info.orig.length <= 3) score -= 8;
-
-    // 5. Prefer words that appear only once (unique = more memorable to test)
-    if (info.count === 1) score += 3;
-
-    // 6. Slight preference for words later in the sentence
-    //    (earlier context gives more hints, later word = better blank)
-    score += (info.pos / text.length) * 3;
-
-    // 7. Penalise slang-style all-lowercase abbreviations (gen-z terms like "ngl","imo")
-    if (info.orig.length <= 4 && info.orig === info.orig.toLowerCase()) score -= 4;
-
-    if (score > bestScore) { bestScore = score; best = info.orig; }
+  if(!Object.keys(found).length)return null;
+  const rank={};
+  kws.forEach((k,i)=>{rank[k]=i;});
+  let best=null,bestScore=-Infinity;
+  Object.entries(found).forEach(([lw,info])=>{
+    let s=0;
+    if(/^\d+$/.test(info.orig))return; // pure number → skip
+    const r=rank[lw];
+    if(r!==undefined)s+=(kws.length-r)*5;
+    s+=Math.min(info.orig.length-3,7);
+    if(info.orig.length<=3)s-=10;
+    if(info.count===1)s+=3;
+    s+=(info.pos/text.length)*2;
+    if(s>bestScore){bestScore=s;best=info.orig;}
   });
-
   return best;
 }
 
-// ── SM-2 SPACED REPETITION ─────────────────────────────
-// SM-2 algorithm: grade 0-5
-// q < 3 → reset; q >= 3 → advance interval
-function sm2Update(card, q) {
-  q = Math.max(0, Math.min(5, q));
-  let { efactor, interval, repetitions } = card;
-  if (q < 3) {
-    repetitions = 0;
-    interval = 1;
-  } else {
-    if (repetitions === 0) interval = 1;
-    else if (repetitions === 1) interval = 6;
-    else interval = Math.round(interval * efactor);
-    repetitions++;
+// ── SM-2 ─────────────────────────────────────────────────────
+function sm2(card,q){
+  q=Math.max(0,Math.min(5,q));
+  let{ef,interval,reps}=card;
+  if(q<3){reps=0;interval=1;}
+  else{
+    if(reps===0)interval=1;
+    else if(reps===1)interval=6;
+    else interval=Math.round(interval*ef);
+    reps++;
   }
-  efactor = efactor + (0.1 - (5-q)*(0.08+(5-q)*0.02));
-  efactor = Math.max(1.3, efactor);
-  card.efactor = efactor;
-  card.interval = interval;
-  card.repetitions = repetitions;
-  card.nextDue = Date.now() + interval * 24*60*60*1000;
-  card.lastQ = q;
-  card.history = (card.history||[]).concat(q);
+  ef=Math.max(1.3,ef+(0.1-(5-q)*(0.08+(5-q)*0.02)));
+  card.ef=ef;card.interval=interval;card.reps=reps;
+  card.nextDue=Date.now()+interval*864e5;
+  card.lastQ=q;
+  card.history=(card.history||[]).concat(q);
   return card;
 }
+function isDue(c){return !c.nextDue||Date.now()>=c.nextDue;}
 
-function isDue(card) {
-  return !card.nextDue || Date.now() >= card.nextDue;
+// ── META FILTER ──────────────────────────────────────────────
+const META=new Set('define definition note notes example examples summary overview introduction topic chapter section unit lesson part module exam test quiz study guide review vocab vocabulary terms key keywords concept concepts source reference title name subject course class page remember important warning tip hint objective answer question aka see'.split(' '));
+function isRealTerm(t){
+  const lw=t.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim();
+  if(META.has(lw))return false;
+  const first=lw.split(/\s+/)[0];
+  if(META.has(first)&&lw.split(/\s+/).length<=3)return false;
+  if(lw.split(/\s+/).length>8)return false;
+  return t.length>=2;
 }
-
-// ── PARSER ─────────────────────────────────────────────
-
-// Words that look like separators in a "term: def" pattern but are
-// actually meta-labels or headings — skip these as the "term" side.
-const META_WORDS = new Set([
-  'define','definition','definitions','note','notes','example','examples',
-  'summary','overview','introduction','topic','chapter','section','unit',
-  'lesson','part','module','exam','test','quiz','study','guide','review',
-  'vocab','vocabulary','terms','key','keywords','concept','concepts',
-  'source','reference','title','name','subject','course','class','page',
-  'remember','important','warning','tip','hint','objective','objectives',
-  'answer','question','q','a','aka','see','cf','nb','ps','eg','ie'
-]);
-
-// Returns true if a line is a title/heading/label with no real content
-function isMetaLine(line) {
-  const clean = line.replace(/^[-•*#\d.>]+\s*/,'').trim();
-  // All-caps short label: "CHAPTER 3", "UNIT 2 — CELLS"
-  if (/^[A-Z0-9\s\-–—:]{3,40}$/.test(clean) && clean === clean.toUpperCase() && clean.length < 50) return true;
-  // Markdown headings
-  if (/^#{1,4}\s/.test(line)) return true;
-  // Pure title line: quoted string with nothing else, e.g. Define: "Foo Bar"
-  if (/^["'"].+["'"]$/.test(clean)) return true;
-  // Single word or very short (likely a label)
-  if (clean.split(/\s+/).length <= 2 && clean.length < 20) return true;
+function isRealDef(d){
+  if(/^["'].+["']$/.test(d.trim()))return false;
+  if(d.trim().length<4)return false;
+  return tokenize(d).length>=1;
+}
+function isMeta(line){
+  const c=line.replace(/^[-•*#\d.>]+\s*/,'').trim();
+  if(/^#{1,4}\s/.test(line))return true;
+  if(/^["'].+["']$/.test(c))return true;
+  if(c.split(/\s+/).length<=2&&c.length<20)return true;
   return false;
 }
 
-// Check if "term" side of a colon-split is a real term vs a meta-label
-function isRealTerm(term) {
-  const t = term.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim();
-  // Single meta word
-  if (META_WORDS.has(t)) return false;
-  // Multi-word where first word is meta
-  const first = t.split(/\s+/)[0];
-  if (META_WORDS.has(first) && t.split(/\s+/).length <= 3) return false;
-  // Looks like a sentence (many words → not a term)
-  if (t.split(/\s+/).length > 8) return false;
-  // Too short to be meaningful
-  if (t.length < 2) return false;
-  // Definition side is just a quoted name/title (no real content words)
-  return true;
-}
+// ── PARSER ───────────────────────────────────────────────────
+function parseGuide(text){
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+  const cards=[];
+  const usedLines=new Set();
 
-// Check if "definition" side has real content (not just a title/name)
-function isRealDef(def) {
-  const d = def.trim();
-  // Entirely quoted → likely a title being echo'd, skip
-  if (/^["'"].+["'"]$/.test(d)) return false;
-  // Too short
-  if (d.length < 4) return false;
-  // Has at least one real content word
-  const words = tokenize(d);
-  return words.length >= 1;
-}
-
-function parseGuide(text) {
-  const lines = text.split(/\n/).map(l=>l.trim()).filter(Boolean);
-  const cards = [];
-  const usedLines = new Set();
-
-  // ── 1. Explicit Q&A pairs (Q: ... A: ...) ──────────────
-  const qaReg = /^(?:Q(?:uestion)?[:.．]?\s*)(.+?)[\n\r]+(?:A(?:nswer)?[:.．]?\s*)(.+)/gim;
+  // 1. Q&A pairs
+  const qaReg=/^(?:Q(?:uestion)?[:.？]?\s*)(.+?)[\n\r]+(?:A(?:nswer)?[:.？]?\s*)(.+)/gim;
   let m;
-  while ((m=qaReg.exec(text))!==null) {
-    const q = m[1].trim(), a = m[2].trim();
-    if (q && a) cards.push({ q, a, type: 'qa', concept: null });
+  while((m=qaReg.exec(text))!==null){
+    const q=m[1].trim(),a=m[2].trim();
+    if(q&&a)cards.push({q,a,type:'qa',concept:null});
   }
 
-  // ── 2. Term → Definition patterns ──────────────────────
-  // Bullet/numbered: "- Term: definition" or "• Term — definition"
-  const bulletDefReg = /^[-•*]\s*(.+?)\s*(?:[:—–])\s*(.+)$/;
-  // Plain line: "Term: definition" (term side ≤ 6 words, not a meta word)
-  const plainDefReg = /^([^:—–\n]{2,60}?)\s*(?:[:—–])\s*(.{4,})$/;
-
-  lines.forEach((line, li) => {
-    if (usedLines.has(li)) return;
-    // Skip Q/A lines already processed
-    if (/^Q(?:uestion)?[:.]/i.test(line) || /^A(?:nswer)?[:.]/i.test(line)) { usedLines.add(li); return; }
-    // Skip pure headings/meta
-    if (/^#{1,4}\s/.test(line)) { usedLines.add(li); return; }
-
-    const raw = line.replace(/^[-•*#\d.)]+\s*/,'').trim();
-    let match = bulletDefReg.exec(line) || plainDefReg.exec(raw);
-
-    if (match) {
-      const term = match[1].replace(/^[-•*#\d.)]+\s*/,'').trim();
-      const def  = match[2].trim();
-
-      if (isRealTerm(term) && isRealDef(def) && !isMetaLine(term)) {
+  // 2. Term: definition lines
+  const bulletDef=/^[-•*]\s*(.+?)\s*(?:[:—–])\s*(.+)$/;
+  const plainDef=/^([^:—–\n]{2,60}?)\s*(?:[:—–])\s*(.{4,})$/;
+  lines.forEach((line,li)=>{
+    if(usedLines.has(li))return;
+    if(/^Q(?:uestion)?[:.]/i.test(line)||/^A(?:nswer)?[:.]/i.test(line)){usedLines.add(li);return;}
+    if(/^#{1,4}\s/.test(line)){usedLines.add(li);return;}
+    const raw=line.replace(/^[-•*#\d.)]+\s*/,'').trim();
+    const match=bulletDef.exec(line)||plainDef.exec(raw);
+    if(match){
+      const term=match[1].replace(/^[-•*#\d.)]+\s*/,'').trim();
+      const def=match[2].trim();
+      if(isRealTerm(term)&&isRealDef(def)&&!isMeta(term)){
         usedLines.add(li);
-        cards.push({ q: `What is "${term}"?`, a: def, term, type: 'definition', concept: term });
-        // Add reverse only if def is short enough to be a clean answer
-        if (def.length < 100 && tokenize(def).length >= 2) {
-          cards.push({ q: `Give the term for: "${def}"`, a: term, term, type: 'reverse', concept: term });
-        }
+        cards.push({q:`What is "${term}"?`,a:def,term,type:'definition',concept:term});
+        if(def.length<100&&tokenize(def).length>=2)
+          cards.push({q:`Give the term for: "${def}"`,a:term,term,type:'reverse',concept:term});
       }
       return;
     }
-
-    // ── 3. Standalone fact sentences ───────────────────────
-    const cleaned = raw;
-    if (
-      cleaned.length >= 25 &&
-      cleaned.length <= 400 &&
-      !isMetaLine(line) &&
-      tokenize(cleaned).length >= 4
-    ) {
+    // 3. Fact sentences
+    const cleaned=raw;
+    if(cleaned.length>=25&&cleaned.length<=400&&!isMeta(line)&&tokenize(cleaned).length>=4){
       usedLines.add(li);
-      cards.push({ q: null, a: cleaned, type: 'fact', concept: null });
+      cards.push({q:null,a:cleaned,type:'fact',concept:null});
     }
   });
 
-  // ── 4. Auto-generate questions for fact cards via TF-IDF ─
-  const factCards = cards.filter(c=>c.type==='fact');
-  const allAnswers = cards.map(c=>c.a);
-  const keywords = allAnswers.length > 0 ? tfIdf(allAnswers) : [];
+  // 4. Generate questions for facts
+  const facts=cards.filter(c=>c.type==='fact');
+  const allA=cards.map(c=>c.a);
+  const kwMap=allA.length>0?tfIdf(allA):[];
 
-  factCards.forEach(card => {
-    const kws = keywords[allAnswers.indexOf(card.a)] || [];
-    card.keywords = kws;
-    card.concept = kws[0] || 'general';
-    if (!card.q) {
-      const target = pickClozeTarget(card.a, kws);
-      if (target) {
-        const escaped = target.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-        const re = new RegExp('(?<![\\w])' + escaped + '(?![\\w])', 'i');
-        const blanked = card.a.replace(re, '___');
-        if (blanked !== card.a && blanked.replace(/\\s+/g,' ').trim().length > 8) {
-          card.q = 'Complete: ' + blanked;
-          card.cloze_word = target;
-        } else {
-          card.q = kws.length >= 1 ? `What do you know about: ${kws.slice(0,2).join(' & ')}?` : 'Recall this concept:';
+  facts.forEach(card=>{
+    const kws=kwMap[allA.indexOf(card.a)]||[];
+    card.keywords=kws;
+    card.concept=kws[0]||'general';
+    if(!card.q){
+      const words=card.a.split(/\s+/);
+      // Only do cloze on short sentences (≤12 words) to avoid too-much-context problem
+      if(words.length<=12){
+        const target=pickClozeTarget(card.a,kws);
+        if(target){
+          const esc=target.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+          const re=new RegExp('(?<![\\w])'+esc+'(?![\\w])','i');
+          const blanked=card.a.replace(re,'___');
+          if(blanked!==card.a){
+            card.q='Complete: '+blanked;
+            card.cloze_word=target;
+          }
         }
-      } else if (kws.length >= 1) {
-        card.q = `What do you know about: ${kws.slice(0,2).join(' & ')}?`;
-      } else {
-        card.q = 'Recall this concept:';
+      }
+      // Fallback for long sentences or failed cloze
+      if(!card.q){
+        if(kws.length>=1)card.q=`What do you know about: ${kws.slice(0,2).join(' & ')}?`;
+        else card.q='Recall this concept:';
       }
     }
   });
 
-  // ── 5. Assign keywords to definition cards too ──────────
-  cards.filter(c=>c.type!=='fact').forEach(card => {
-    if (!card.keywords) {
-      card.keywords = tokenize((card.a||'') + ' ' + (card.q||''));
-    }
+  // 5. Keywords for definition cards
+  cards.filter(c=>c.type!=='fact').forEach(card=>{
+    if(!card.keywords)card.keywords=tokenize((card.a||'')+' '+(card.q||''));
   });
 
-  // ── 6. Deduplicate ──────────────────────────────────────
-  const seen = new Set();
-  const unique = cards.filter(c => {
-    const k = (c.q||'').toLowerCase().trim() + '|' + (c.a||'').toLowerCase().trim();
-    if (seen.has(k)) return false;
-    seen.add(k); return true;
+  // 6. Deduplicate
+  const seen=new Set();
+  const unique=cards.filter(c=>{
+    const k=(c.q||'').toLowerCase().trim()+'|'+(c.a||'').toLowerCase().trim();
+    if(seen.has(k))return false;
+    seen.add(k);return true;
   });
 
-  // ── 7. Initialise SM-2 fields ───────────────────────────
-  unique.forEach((card, i) => {
-    if (!card.concept) card.concept = card.keywords?.[0] || 'general';
-    card.id = i;
-    card.efactor = 2.5;
-    card.interval = 0;
-    card.repetitions = 0;
-    card.nextDue = 0;
-    card.lastQ = null;
-    card.history = [];
-    card.sessionCorrect = 0;
-    card.sessionTotal = 0;
+  // 7. Init SM-2 fields
+  unique.forEach((c,i)=>{
+    if(!c.concept)c.concept=c.keywords?.[0]||'general';
+    c.id=i;c.ef=2.5;c.interval=0;c.reps=0;
+    c.nextDue=0;c.lastQ=null;c.history=[];
+    c.sessionCorrect=0;c.sessionTotal=0;
   });
-
   return unique;
 }
 
-function escapeRegex(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+// ── BUILD BLANKS ─────────────────────────────────────────────
+// Only blanks real content words that appear in the text.
+// Short texts get 1 blank, medium 2, longer 3.
+// NEVER blanks pure numbers or tokens < 3 chars.
+function buildBlanks(card){
+  const text=card.a;
+  const kws=card.keywords||[];
+  const wordRe=/[a-zA-Z][a-zA-Z'-]{2,}/g;
+  const found={};
+  let m;
+  while((m=wordRe.exec(text))!==null){
+    const w=m[0],lw=w.toLowerCase();
+    if(SW.has(lw))continue;
+    if(!found[lw])found[lw]={orig:w,count:0,pos:m.index};
+    found[lw].count++;
+  }
+  const rank={};kws.forEach((k,i)=>{rank[k]=i;});
+  const candidates=Object.entries(found).map(([lw,info])=>{
+    let s=0;
+    if(/^\d+$/.test(info.orig))return null;
+    const r=rank[lw];
+    if(r!==undefined)s+=(kws.length-r)*5;
+    s+=Math.min(info.orig.length-3,7);
+    if(info.orig.length<=3)s-=10;
+    if(info.count===1)s+=3;
+    s+=(info.pos/text.length)*2;
+    return{word:info.orig,lw,score:s};
+  }).filter(Boolean).sort((a,b)=>b.score-a.score);
+
+  const wc=text.split(/\s+/).length;
+  const maxBlanks=wc<=6?1:wc<=12?2:3;
+  const chosen=candidates.slice(0,maxBlanks);
+  if(!chosen.length)return{html:'',answers:[]};
+
+  let html=text;
+  const answers=[];
+  chosen.forEach((c,i)=>{
+    const esc=c.word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const re=new RegExp('(?<![\\w])'+esc+'(?![\\w])','i');
+    if(re.test(html)){
+      html=html.replace(re,
+        `<input class="blank-input" id="blank-${i}" data-answer="${c.word.toLowerCase()}" `+
+        `size="${Math.max(5,c.word.length+2)}" autocomplete="off" spellcheck="false">`);
+      answers.push(c.word.toLowerCase());
+    }
+  });
+  return{html,answers};
 }
 
-// Extract topic/title
-function extractTitle(text) {
-  const firstLine = text.split('\n').find(l=>l.trim().length>3);
-  if (!firstLine) return 'Study Session';
-  return firstLine.replace(/^#+\s*/,'').trim().slice(0,50);
+// ── MCQ DISTRACTORS ──────────────────────────────────────────
+function buildMCQ(card,all){
+  const correct=card.a;
+  const others=all.filter(c=>c.id!==card.id&&c.a!==correct);
+  const shuffled=others.sort(()=>Math.random()-.5).slice(0,3).map(c=>c.a.slice(0,120));
+  return{options:[...shuffled,correct].sort(()=>Math.random()-.5),correct};
 }
 
-// Group cards by concept
-function buildConceptMap(cards) {
-  const map = new Map();
-  cards.forEach(c => {
-    const con = c.concept || 'general';
-    if (!map.has(con)) map.set(con, []);
-    map.get(con).push(c);
+// ── RECALL SCORING ────────────────────────────────────────────
+function scoreRecall(input,card){
+  const kws=card.keywords||tokenize(card.a);
+  if(!kws.length){
+    const s=fuzzy(input,card.a);
+    return{score:s,q:Math.round(s*5),matched:[],missed:[]};
+  }
+  const matched=[],missed=[];
+  kws.forEach(kw=>{
+    const best=Math.max(...input.toLowerCase().split(/\s+/).map(w=>fuzzy(w,kw)));
+    (best>0.75?matched:missed).push(kw);
+  });
+  const score=matched.length/kws.length;
+  return{score,q:Math.round(score*4+(score>0.8?1:0)),matched,missed};
+}
+
+// ── ADAPTIVE PRIORITY ─────────────────────────────────────────
+function priority(card){
+  const overdue=Math.max(0,Date.now()-(card.nextDue||0))/36e5;
+  const failRate=card.history.length?card.history.filter(q=>q<3).length/card.history.length:0.5;
+  const isNew=card.history.length===0?20:0;
+  return overdue*2+failRate*30+(2.5-card.ef)*10+isNew;
+}
+
+// ── STATE ─────────────────────────────────────────────────────
+let S={
+  cards:[],concepts:new Map(),
+  mode:'adaptive',
+  queue:[],qIdx:0,
+  sessionCorrect:0,sessionTotal:0,
+  title:'',
+  currentCard:null,
+};
+
+// ── CONCEPT MAP ───────────────────────────────────────────────
+function buildConceptMap(cards){
+  const map=new Map();
+  cards.forEach(c=>{
+    const k=c.concept||'general';
+    if(!map.has(k))map.set(k,[]);
+    map.get(k).push(c);
   });
   return map;
 }
 
-// ── ADAPTIVE CARD SELECTION ────────────────────────────
-// Priority score: weight due-ness, failure rate, EF
-function priorityScore(card) {
-  const overdue = Math.max(0, Date.now() - (card.nextDue||0)) / (1000*60*60); // hours overdue
-  const failRate = card.history.length > 0
-    ? card.history.filter(q=>q<3).length / card.history.length : 0.5;
-  const efPenalty = (2.5 - card.efactor) * 10;
-  const isNew = card.history.length === 0 ? 20 : 0;
-  return overdue * 2 + failRate * 30 + efPenalty + isNew;
-}
-
-function selectNextCard(cards, forceMode) {
-  const due = cards.filter(isDue);
-  if (due.length === 0) return null;
-  // Sort by priority score descending
-  const sorted = due.slice().sort((a,b) => priorityScore(b) - priorityScore(a));
-  return sorted[0];
-}
-
-// ── MCQ DISTRACTOR GENERATION ─────────────────────────
-// Builds wrong options from other cards' answers
-function buildMCQ(card, allCards) {
-  const correct = card.a;
-  // Get answers from other cards, preferring same concept
-  const others = allCards.filter(c => c.id !== card.id && c.a !== correct);
-  // Shuffle & pick 3
-  const shuffled = others.sort(()=>Math.random()-0.5).slice(0,3).map(c=>c.a.slice(0,100));
-  const options = [...shuffled, correct].sort(()=>Math.random()-0.5);
-  return { options, correct };
-}
-
-// ── FILL IN THE BLANKS GENERATION ─────────────────────
-function buildBlanks(card) {
-  const text = card.a;
-  // Use TF-IDF keywords already computed for this card
-  const kws = card.keywords || [];
-
-  // Score every content word in the text using pickClozeTarget logic,
-  // then take the top N to blank — guaranteeing they exist in the text.
-  const wordRe = /[a-zA-Z][a-zA-Z'-]{2,}/g;
-  const found = {};
-  let m;
-  while ((m = wordRe.exec(text)) !== null) {
-    const w = m[0], lw = w.toLowerCase();
-    if (STOPWORDS.has(lw)) continue;
-    if (!found[lw]) found[lw] = { orig: w, count: 0, pos: m.index };
-    found[lw].count++;
-  }
-
-  const tfidfRank = {};
-  kws.forEach((kw, i) => { tfidfRank[kw.toLowerCase()] = i; });
-
-  // Score each candidate
-  const candidates = Object.entries(found).map(([lw, info]) => {
-    let score = 0;
-    const rank = tfidfRank[lw];
-    if (rank !== undefined) score += (kws.length - rank) * 4;
-    if (/^\d+$/.test(info.orig)) score -= 50;
-    if (/^[^a-zA-Z]+$/.test(info.orig)) score -= 50;
-    score += Math.min(info.orig.length - 3, 6);
-    if (info.orig.length <= 3) score -= 8;
-    if (info.count === 1) score += 3;
-    score += (info.pos / text.length) * 3;
-    return { word: info.orig, lw, score };
-  }).filter(c => c.score > -10);
-
-  candidates.sort((a, b) => b.score - a.score);
-
-  // Cap at 1 blank for short text, up to 2 for medium, 3 for long
-  const wordCount = text.split(/\s+/).length;
-  const maxBlanks = wordCount <= 6 ? 1 : wordCount <= 12 ? 2 : 3;
-  const chosen = candidates.slice(0, maxBlanks);
-
-  if (chosen.length === 0) return { html: '', answers: [] };
-
-  // Replace chosen words in the text (replace first occurrence each)
-  let html = text;
-  const answers = [];
-  chosen.forEach((c, i) => {
-    const re = new RegExp('(?<![\\w])' + escapeRegex(c.word) + '(?![\\w])', 'i');
-    if (re.test(html)) {
-      html = html.replace(re,
-        `<input class="blank-input" id="blank-${i}" data-answer="${c.word.toLowerCase()}" ` +
-        `size="${Math.max(5, c.word.length + 2)}" autocomplete="off" spellcheck="false">`);
-      answers.push(c.word.toLowerCase());
-    }
-  });
-
-  return { html, answers };
-}
-
-// ── RECALL SCORING ─────────────────────────────────────
-// Score free recall: keyword coverage + fuzzy match
-function scoreRecall(userText, card) {
-  const kws = card.keywords || tokenize(card.a);
-  if (kws.length === 0) {
-    // Fallback: direct fuzzy match
-    const score = fuzzyScore(userText, card.a);
-    return { score, q: Math.round(score * 5), matched: [], missed: [] };
-  }
-  const matched = [];
-  const missed = [];
-  kws.forEach(kw => {
-    const best = Math.max(
-      ...userText.toLowerCase().split(/\s+/).map(w => fuzzyScore(w, kw))
-    );
-    if (best > 0.75) matched.push(kw);
-    else missed.push(kw);
-  });
-  const score = matched.length / kws.length;
-  const q = Math.round(score * 4 + (score > 0.8 ? 1 : 0));
-  return { score, q, matched, missed };
-}
-
-// ── STATE ──────────────────────────────────────────────
-let state = {
-  cards: [],
-  conceptMap: new Map(),
-  currentCard: null,
-  currentMode: 'adaptive',
-  forcedMode: null,
-  sessionCorrect: 0,
-  sessionTotal: 0,
-  sessionStart: null,
-  title: '',
-  awaitingRating: false,
-};
-
-// ── RENDER FUNCTIONS ───────────────────────────────────
-function renderSidebar() {
-  const { cards, conceptMap } = state;
-  $('stat-total').textContent = cards.length;
-  const due = cards.filter(isDue).length;
-  $('stat-due').textContent = due;
-  const mastered = cards.filter(c=>c.repetitions>=3 && c.efactor>=2.0).length;
-  $('stat-mastered').textContent = mastered;
-  const acc = state.sessionTotal > 0
-    ? Math.round(state.sessionCorrect/state.sessionTotal*100)+'%' : '—';
-  $('stat-acc').textContent = acc;
-  const overallPct = Math.round(mastered/Math.max(1,cards.length)*100);
-  $('overall-bar').style.width = overallPct+'%';
-  $('overall-pct').textContent = overallPct+'% mastered';
+// ── HOME RENDER ───────────────────────────────────────────────
+function renderHome(){
+  const{cards,concepts}=S;
+  $('st-total').textContent=cards.length;
+  const mastered=cards.filter(c=>c.reps>=3&&c.ef>=2.0).length;
+  $('st-mastered').textContent=mastered;
+  const weak=cards.filter(c=>c.history.length>0&&c.lastQ<3).length;
+  $('st-weak').textContent=weak;
+  const acc=S.sessionTotal>0?Math.round(S.sessionCorrect/S.sessionTotal*100)+'%':'—';
+  $('st-acc').textContent=acc;
 
   // Concept heatmap
-  const cl = $('concept-list');
-  cl.innerHTML = '';
-  const concepts = [...conceptMap.entries()].slice(0,12);
-  concepts.forEach(([con, cds]) => {
-    const avgQ = cds.reduce((s,c)=>s+(c.lastQ||0),0)/cds.length;
-    const cls = avgQ < 2 ? 'weak' : avgQ < 3.5 ? 'medium' : 'strong';
-    const pct = Math.round(avgQ/5*100);
-    const div = document.createElement('div');
-    div.className = `concept-item ${cls}`;
-    div.innerHTML = `<span class="concept-name">${con}</span><span class="concept-score">${pct}%</span>`;
-    div.onclick = () => drillConcept(con);
-    cl.appendChild(div);
-  });
-
-  // Weak areas
-  const weak = cards.filter(c=>c.history.length>0 && c.history[c.history.length-1]<3).map(c=>c.concept).filter(Boolean);
-  const weakUniq = [...new Set(weak)].slice(0,6);
-  $('weak-list').innerHTML = weakUniq.length
-    ? weakUniq.map(w=>`<div style="color:var(--danger);font-size:0.75rem">⚠ ${w}</div>`).join('')
-    : '<span style="color:var(--success)">No weak areas yet</span>';
-
-  renderMasteryBars();
-}
-
-function renderMasteryBars() {
-  const mb = $('mastery-bars');
-  mb.innerHTML = '';
-  [...state.conceptMap.entries()].slice(0,10).forEach(([con, cds]) => {
-    const avgEF = cds.reduce((s,c)=>s+c.efactor,0)/cds.length;
-    const pct = Math.round(Math.max(0, Math.min(100, (avgEF-1.3)/(2.5-1.3)*100)));
-    const color = pct < 30 ? 'var(--danger)' : pct < 60 ? 'var(--warn)' : 'var(--success)';
-    mb.innerHTML += `
-      <div class="mastery-row">
-        <span class="mastery-label" title="${con}">${con}</span>
-        <div class="mastery-bar"><div class="mastery-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span style="font-size:0.7rem;color:var(--muted);width:30px;text-align:right">${pct}%</span>
-      </div>`;
+  const cg=$('concept-grid');
+  cg.innerHTML='';
+  [...concepts.entries()].slice(0,12).forEach(([con,cds])=>{
+    const avgQ=cds.reduce((s,c)=>s+(c.lastQ||0),0)/cds.length;
+    const pct=Math.round(Math.max(0,Math.min(100,(cds.filter(c=>c.reps>=2).length/cds.length)*100)));
+    const cls=avgQ<2?'chip-weak':avgQ<3.5?'chip-med':'chip-good';
+    const color=avgQ<2?'var(--danger)':avgQ<3.5?'var(--warn)':'var(--success)';
+    cg.innerHTML+=`<div class="concept-chip ${cls}">
+      <div class="cn">${con}</div>
+      <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div>
+      <div class="cp">${pct}% mastered</div>
+    </div>`;
   });
 }
 
-// ── QUESTION RENDERING ─────────────────────────────────
-let currentMCQ = null;
-let currentBlanks = null;
-
-function showCard(card) {
-  if (!card) {
-    // All done
-    hide('q-card');
-    show('schedule-card');
-    renderSidebar();
-    return;
-  }
-  state.currentCard = card;
-  state.awaitingRating = false;
-
-  // Pick mode
-  let mode = state.forcedMode || state.currentMode;
-  if (mode === 'adaptive') {
-    // Adaptive: new cards → explain, repeat failures → blanks/recall, known → MCQ
-    if (card.history.length === 0) mode = 'explain';
-    else if (card.lastQ < 3) mode = Math.random()<0.5 ? 'recall' : 'blanks';
-    else mode = Math.random()<0.5 ? 'mcq' : 'recall';
-  }
-
-  show('q-card');
-  hide('schedule-card');
-  $('q-card').classList.remove('flash-c','flash-w');
-
-  // Reset all areas
-  hide('mcq-area'); hide('recall-area'); hide('blanks-area'); hide('explain-area');
-  $('feedback-box').className = 'feedback-box';
-  $('feedback-box').textContent = '';
-  document.querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('show'));
-
-  // Queue info
-  const due = state.cards.filter(isDue).length;
-  $('q-queue-info').textContent = `${due} due · card #${card.id+1}`;
-
-  // Question text
-  $('q-text').textContent = card.q || 'Recall everything you know about: ' + card.a.slice(0,60)+'...';
-  hide('q-hint');
-
-  if (mode === 'mcq') {
-    $('q-type-badge').textContent = 'Multiple Choice';
-    $('q-type-badge').className = 'card-type mcq';
-    currentMCQ = buildMCQ(card, state.cards);
-    show('mcq-area');
-    const container = $('mcq-options');
-    container.innerHTML = '';
-    currentMCQ.options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'mcq-option';
-      btn.textContent = opt;
-      btn.onclick = () => handleMCQ(btn, opt, card);
-      container.appendChild(btn);
-    });
-
-  } else if (mode === 'recall') {
-    $('q-type-badge').textContent = 'Free Recall';
-    $('q-type-badge').className = 'card-type recall';
-    show('recall-area');
-    $('recall-input').value = '';
-    $('recall-input').focus();
-
-  } else if (mode === 'blanks') {
-    const blanksData = buildBlanks(card);
-    if (!blanksData.answers.length) {
-      // Fallback to recall
-      mode = 'recall';
-      $('q-type-badge').textContent = 'Free Recall';
-      $('q-type-badge').className = 'card-type recall';
-      show('recall-area');
-      $('recall-input').value = '';
-    } else {
-      $('q-type-badge').textContent = 'Fill in the Blanks';
-      $('q-type-badge').className = 'card-type blanks';
-      currentBlanks = blanksData;
-      show('blanks-area');
-      $('blanks-text').innerHTML = blanksData.html;
-      $('blanks-text').querySelectorAll('.blank-input')[0]?.focus();
-    }
-
-  } else if (mode === 'explain') {
-    $('q-type-badge').textContent = 'Review';
-    $('q-type-badge').className = 'card-type review';
-    show('explain-area');
-    $('explain-answer').textContent = card.a;
-    $('explain-answer').classList.remove('show');
-  }
-
-  $('q-card').classList.add('fade-in');
-  setTimeout(()=>$('q-card').classList.remove('fade-in'), 400);
-}
-
-function handleMCQ(btn, opt, card) {
-  const isCorrect = opt === currentMCQ.correct;
-  document.querySelectorAll('.mcq-option').forEach(b => {
-    b.disabled = true;
-    if (b.textContent === currentMCQ.correct) b.classList.add('correct');
-    else if (b === btn && !isCorrect) b.classList.add('wrong');
-  });
-  const q = isCorrect ? 4 : 1;
-  showFeedback(isCorrect ? 'correct' : 'incorrect',
-    isCorrect ? `✓ Correct! The answer is: ${card.a}` : `✗ Wrong. The correct answer is: ${card.a}`,
-    card);
-  recordAndRate(card, q, isCorrect);
-  $('q-card').classList.add(isCorrect ? 'flash-c' : 'flash-w');
-}
-
-function handleRecallSubmit() {
-  const input = $('recall-input').value;
-  if (!input.trim()) return;
-  const card = state.currentCard;
-  const result = scoreRecall(input, card);
-  const level = result.score > 0.7 ? 'correct' : result.score > 0.35 ? 'partial' : 'incorrect';
-  const msg = level === 'correct'
-    ? `✓ Great recall! Keywords covered: ${result.matched.join(', ')}\n\nFull answer: ${card.a}`
-    : level === 'partial'
-    ? `~ Partial recall. You got: ${result.matched.join(', ')}\nMissed: ${result.missed.join(', ')}\n\nFull answer: ${card.a}`
-    : `✗ Needs work. Keywords missed: ${result.missed.join(', ')}\n\nFull answer: ${card.a}`;
-  showFeedback(level, msg, card);
-  recordAndRate(card, result.q, result.score > 0.7);
-}
-
-function handleReveal() {
-  const card = state.currentCard;
-  showFeedback('partial', `Answer: ${card.a}`, card);
-  showRatingButtons();
-}
-
-function handleBlankCheck() {
-  const card = state.currentCard;
-  const inputs = $('blanks-text').querySelectorAll('.blank-input');
-  let correct = 0;
-  inputs.forEach(inp => {
-    const answer = inp.dataset.answer.toLowerCase();
-    const given = inp.value.trim().toLowerCase();
-    const score = fuzzyScore(given, answer);
-    if (score > 0.8) { inp.classList.add('correct'); correct++; }
-    else { inp.classList.add('wrong'); inp.value = inp.dataset.answer; }
-    inp.disabled = true;
-  });
-  const ratio = correct / inputs.length;
-  const level = ratio >= 1 ? 'correct' : ratio >= 0.5 ? 'partial' : 'incorrect';
-  const q = Math.round(ratio * 4);
-  showFeedback(level,
-    ratio >= 1 ? `✓ All blanks correct!` : `${correct}/${inputs.length} correct. Full answer: ${card.a}`,
-    card);
-  recordAndRate(card, q, ratio >= 1);
-}
-
-function handleExplainShow() {
-  $('explain-answer').classList.add('show');
-}
-
-function handleExplainNext() {
-  const card = state.currentCard;
-  showRatingButtons(true);
-}
-
-function showFeedback(level, msg, card) {
-  const fb = $('feedback-box');
-  fb.textContent = msg;
-  fb.className = `feedback-box show ${level}`;
-}
-
-function showRatingButtons(show_all = false) {
-  state.awaitingRating = true;
-  document.querySelectorAll('.rating-btn').forEach(b => b.classList.add('show'));
-}
-
-function recordAndRate(card, autoQ, isCorrect) {
-  state.sessionTotal++;
-  if (isCorrect) state.sessionCorrect++;
-  card.sessionTotal = (card.sessionTotal||0)+1;
-  if (isCorrect) card.sessionCorrect = (card.sessionCorrect||0)+1;
-  showRatingButtons();
-}
-
-function applyRating(q) {
-  const card = state.currentCard;
-  if (!card) return;
-  sm2Update(card, q);
-  state.awaitingRating = false;
-  document.querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('show'));
-  renderSidebar();
-  setTimeout(() => {
-    const next = selectNextCard(state.cards, state.forcedMode || state.currentMode);
-    showCard(next);
-  }, 300);
-}
-
-function drillConcept(concept) {
-  state.forcedMode = 'recall';
-  const conceptCards = state.conceptMap.get(concept) || [];
-  if (conceptCards.length === 0) return;
-  const card = conceptCards.sort(()=>Math.random()-0.5)[0];
-  showCard(card);
-}
-
-// ── BOOTSTRAP ──────────────────────────────────────────
-function startStudy(text) {
-  state.cards = parseGuide(text);
-  if (state.cards.length === 0) {
-    $('parse-error').textContent = 'Could not extract study cards. Make sure your guide has real content lines — e.g. "Photosynthesis: converts light to glucose" or "Q: What is X? / A: ..."';
-    show('parse-error');
-    return;
-  }
-  hide('parse-error');
-  state.conceptMap = buildConceptMap(state.cards);
-  state.sessionCorrect = 0;
-  state.sessionTotal = 0;
-  state.sessionStart = Date.now();
-  state.title = extractTitle(text);
-  state.currentMode = 'adaptive';
-  state.forcedMode = null;
-  $('dash-topic').textContent = state.title;
-  showScreen('dashboard');
-  renderSidebar();
-  const first = selectNextCard(state.cards, null);
-  showCard(first);
-}
-
-function showScreen(name) {
+function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $('screen-'+name).classList.add('active');
 }
 
-// ── EVENT LISTENERS ────────────────────────────────────
-// File upload
-$('drop-zone').addEventListener('click', ()=>$('file-input').click());
-$('drop-zone').addEventListener('dragover', e=>{e.preventDefault();$('drop-zone').classList.add('drag');});
-$('drop-zone').addEventListener('dragleave', ()=>$('drop-zone').classList.remove('drag'));
-$('drop-zone').addEventListener('drop', e=>{
-  e.preventDefault();
-  $('drop-zone').classList.remove('drag');
-  const f = e.dataTransfer.files[0];
-  if (f) readFile(f);
-});
-$('file-input').addEventListener('change', e=>{
-  if (e.target.files[0]) readFile(e.target.files[0]);
-});
-
-function readFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    $('guide-text').value = e.target.result;
-    $('btn-start').disabled = false;
-  };
-  reader.readAsText(file);
+// ── BUILD QUEUE ───────────────────────────────────────────────
+function buildQueue(mode){
+  const cards=S.cards;
+  if(mode==='adaptive'){
+    return cards.filter(isDue).sort((a,b)=>priority(b)-priority(a));
+  }
+  if(mode==='weak'){
+    const w=cards.filter(c=>c.history.length>0&&c.lastQ<3);
+    return w.length?w.sort(()=>Math.random()-.5):cards.sort(()=>Math.random()-.5).slice(0,10);
+  }
+  // For non-adaptive modes, use all cards shuffled
+  return [...cards].sort(()=>Math.random()-.5);
 }
 
-$('guide-text').addEventListener('input', ()=>{
-  $('btn-start').disabled = $('guide-text').value.trim().length < 10;
-});
+// ── START SESSION ─────────────────────────────────────────────
+function startSession(mode){
+  S.mode=mode;
+  S.queue=buildQueue(mode);
+  S.qIdx=0;
+  S.sessionCorrect=0;
+  S.sessionTotal=0;
 
-$('btn-start').addEventListener('click', ()=>{
-  startStudy($('guide-text').value);
-});
+  const labels={
+    learn:'📖 Learn',mcq:'🔘 Multiple Choice',blanks:'✏️ Fill in the Blank',
+    recall:'💭 Free Recall',adaptive:'🧠 Adaptive (SM-2)',weak:'⚠️ Weak Areas'
+  };
+  $('study-mode-label').textContent=labels[mode]||mode;
+  showScreen('study');
+  showCard();
+}
 
-$('btn-restart').addEventListener('click', ()=>showScreen('upload'));
-$('btn-new-guide').addEventListener('click', ()=>showScreen('upload'));
+// ── SHOW CARD ─────────────────────────────────────────────────
+function showCard(){
+  const body=$('study-body');
 
-// Mode tabs
-document.querySelectorAll('.mode-tab').forEach(tab => {
-  tab.addEventListener('click', ()=>{
-    document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    state.currentMode = tab.dataset.mode;
-    state.forcedMode = null;
-    const next = selectNextCard(state.cards, state.currentMode);
-    showCard(next);
+  if(S.qIdx>=S.queue.length||!S.queue.length){
+    showDone();return;
+  }
+
+  const card=S.queue[S.qIdx];
+  S.currentCard=card;
+  const total=S.queue.length;
+  const pct=Math.round((S.qIdx/total)*100);
+  $('prog-fill').style.width=pct+'%';
+  $('prog-txt').textContent=`${S.qIdx}/${total}`;
+
+  // Decide render mode
+  let renderMode=S.mode;
+  if(renderMode==='adaptive'){
+    if(card.history.length===0)renderMode='learn';
+    else if(card.lastQ<3)renderMode=Math.random()<.5?'blanks':'recall';
+    else renderMode=Math.random()<.5?'mcq':'recall';
+  }
+  if(renderMode==='weak')renderMode='recall';
+
+  let html='';
+
+  if(renderMode==='learn'){
+    html=renderLearn(card);
+  } else if(renderMode==='mcq'){
+    html=renderMCQ(card);
+  } else if(renderMode==='blanks'){
+    const bd=buildBlanks(card);
+    if(!bd.answers.length)renderMode='recall'; // fallback
+    else{html=renderBlanks(card,bd);}
+  }
+  if(renderMode==='recall'||(!html&&renderMode!=='learn'&&renderMode!=='mcq'&&renderMode!=='blanks')){
+    html=renderRecall(card);
+  }
+
+  body.innerHTML=`<div class="q-card fade-up">${html}
+    <div class="feedback-box" id="feedback-box"></div>
+    <div class="rating-row" id="rating-row">
+      <button class="rating-btn" data-q="0">0<br><span style="color:var(--muted);font-size:.62rem">Blank</span></button>
+      <button class="rating-btn" data-q="1">1<br><span style="color:var(--muted);font-size:.62rem">Wrong</span></button>
+      <button class="rating-btn" data-q="2">2<br><span style="color:var(--muted);font-size:.62rem">Hard</span></button>
+      <button class="rating-btn" data-q="3">3<br><span style="color:var(--muted);font-size:.62rem">OK</span></button>
+      <button class="rating-btn" data-q="4">4<br><span style="color:var(--muted);font-size:.62rem">Good</span></button>
+      <button class="rating-btn" data-q="5">5<br><span style="color:var(--muted);font-size:.62rem">Easy</span></button>
+    </div>
+  </div>`;
+
+  // Attach events
+  document.querySelectorAll('.rating-btn').forEach(b=>{
+    b.addEventListener('click',()=>applyRating(parseInt(b.dataset.q)));
   });
-});
 
-// Rating buttons
-document.querySelectorAll('.rating-btn').forEach(btn => {
-  btn.addEventListener('click', ()=>applyRating(parseInt(btn.dataset.q)));
-});
+  if(renderMode==='mcq'){
+    document.querySelectorAll('.mcq-opt').forEach(btn=>{
+      btn.addEventListener('click',()=>handleMCQ(btn));
+    });
+  }
+  if(renderMode==='recall'){
+    const ri=$('recall-inp');
+    $('btn-submit-recall')?.addEventListener('click',handleRecall);
+    $('btn-reveal')?.addEventListener('click',handleReveal);
+    ri?.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.ctrlKey)handleRecall();});
+  }
+  if(renderMode==='blanks'){
+    $('btn-check-blanks')?.addEventListener('click',handleBlanks);
+  }
+  if(renderMode==='learn'){
+    $('btn-learn-next')?.addEventListener('click',()=>{
+      // Auto-rate as 3 (seen) and advance
+      applyRating(3);
+    });
+    $('btn-learn-rate')?.addEventListener('click',()=>{
+      showRatingButtons();
+    });
+  }
+}
 
-// Recall
-$('btn-submit-recall').addEventListener('click', handleRecallSubmit);
-$('recall-input').addEventListener('keydown', e=>{
-  if (e.key==='Enter' && e.ctrlKey) handleRecallSubmit();
-});
-$('btn-reveal').addEventListener('click', handleReveal);
+function renderLearn(card){
+  const badge='<span class="q-type-badge badge-teal">Learn</span>';
+  const concept=`<span class="q-concept">${card.concept||''}</span>`;
+  let content='';
+  if(card.type==='definition'||card.type==='reverse'){
+    content=`<div class="learn-term">${card.term||''}</div>
+    <div class="learn-card">${card.a}</div>`;
+  } else {
+    content=`<div class="learn-card">${card.a}</div>`;
+  }
+  return `<div class="q-card-header">${badge}${concept}</div>
+  ${content}
+  <div class="btn-row" style="margin-top:1rem">
+    <button class="btn-action" id="btn-learn-next">Got it →</button>
+    <button class="btn-action sec" id="btn-learn-rate">Rate Difficulty</button>
+  </div>`;
+}
 
-// Blanks
-$('btn-check-blanks').addEventListener('click', handleBlankCheck);
+function renderMCQ(card){
+  const mcq=buildMCQ(card,S.cards);
+  card._mcq=mcq;
+  const badge='<span class="q-type-badge badge-purple">Multiple Choice</span>';
+  const concept=`<span class="q-concept">${card.concept||''}</span>`;
+  const opts=mcq.options.map(o=>
+    `<button class="mcq-opt" data-opt="${escH(o)}">${escH(o)}</button>`
+  ).join('');
+  return `<div class="q-card-header">${badge}${concept}</div>
+  <div class="q-text">${escH(card.q)}</div>
+  <div class="mcq-options">${opts}</div>`;
+}
 
-// Explain
-$('btn-show-explain').addEventListener('click', handleExplainShow);
-$('btn-next-explain').addEventListener('click', ()=>{
+function renderRecall(card){
+  const badge='<span class="q-type-badge badge-red">Free Recall</span>';
+  const concept=`<span class="q-concept">${card.concept||''}</span>`;
+  return `<div class="q-card-header">${badge}${concept}</div>
+  <div class="q-text">${escH(card.q)}</div>
+  <textarea class="recall-input" id="recall-inp" placeholder="Write everything you know..."></textarea>
+  <div class="btn-row">
+    <button class="btn-action" id="btn-submit-recall">Check Answer</button>
+    <button class="btn-action sec" id="btn-reveal">Reveal</button>
+  </div>`;
+}
+
+function renderBlanks(card,bd){
+  const badge='<span class="q-type-badge badge-yellow">Fill in the Blank</span>';
+  const concept=`<span class="q-concept">${card.concept||''}</span>`;
+  // Show the question (term/topic) above the blanked sentence
+  const qLine=card.type==='definition'?`<div class="q-text">Fill in the blank:</div>`
+    :`<div class="q-text">${escH(card.q.replace('Complete: ',''))}</div>`;
+  return `<div class="q-card-header">${badge}${concept}</div>
+  ${qLine}
+  <div class="blanks-text">${bd.html}</div>
+  <div class="btn-row" style="margin-top:.75rem">
+    <button class="btn-action" id="btn-check-blanks">Check</button>
+  </div>`;
+}
+
+function escH(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── HANDLERS ──────────────────────────────────────────────────
+function handleMCQ(btn){
+  const card=S.currentCard;
+  const opt=btn.dataset.opt;
+  const correct=card._mcq.correct;
+  const isCorrect=opt===correct;
+  document.querySelectorAll('.mcq-opt').forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.opt===correct)b.classList.add('correct');
+    else if(b===btn&&!isCorrect)b.classList.add('wrong');
+  });
+  const q=isCorrect?4:1;
+  feedback(isCorrect?'correct':'incorrect',
+    isCorrect?`✓ Correct!`:`✗ Wrong. Correct answer: ${correct}`);
+  record(isCorrect);
+  if(S.mode==='learn'||S.mode==='mcq')setTimeout(()=>applyRating(q),1200);
+  else showRatingButtons();
+}
+
+function handleRecall(){
+  const card=S.currentCard;
+  const input=($('recall-inp')||{}).value||'';
+  if(!input.trim())return;
+  const res=scoreRecall(input,card);
+  const level=res.score>0.7?'correct':res.score>0.35?'partial':'incorrect';
+  const msg=level==='correct'
+    ?`✓ Great! Keywords: ${res.matched.join(', ')}\n\nAnswer: ${card.a}`
+    :level==='partial'
+    ?`~ Partial. Got: ${res.matched.join(', ')} | Missed: ${res.missed.join(', ')}\n\nAnswer: ${card.a}`
+    :`✗ Missed: ${res.missed.join(', ')}\n\nAnswer: ${card.a}`;
+  feedback(level,msg);
+  record(res.score>0.7);
   showRatingButtons();
-  $('explain-answer').classList.add('show');
-});
+}
 
-$('btn-keep-drilling').addEventListener('click', ()=>{
-  state.forcedMode = 'recall';
-  const cards = state.cards.sort(()=>Math.random()-0.5);
-  showCard(cards[0]);
-});
+function handleReveal(){
+  const card=S.currentCard;
+  feedback('partial',`Answer: ${card.a}`);
+  showRatingButtons();
+}
 
-// Session review
-$('btn-study-again').addEventListener('click', ()=>{
-  state.sessionCorrect = 0;
-  state.sessionTotal = 0;
-  showScreen('dashboard');
-  const next = selectNextCard(state.cards, state.currentMode);
-  showCard(next);
+function handleBlanks(){
+  const inputs=document.querySelectorAll('.blank-input');
+  let correct=0;
+  inputs.forEach(inp=>{
+    const ans=inp.dataset.answer;
+    const given=inp.value.trim().toLowerCase();
+    const ok=fuzzy(given,ans)>0.8;
+    inp.classList.add(ok?'correct':'wrong');
+    if(!ok)inp.value=inp.dataset.answer;
+    inp.disabled=true;
+    if(ok)correct++;
+  });
+  const ratio=correct/inputs.length;
+  const level=ratio>=1?'correct':ratio>=.5?'partial':'incorrect';
+  feedback(level,
+    ratio>=1?`✓ All correct!`
+    :`${correct}/${inputs.length} correct. Answer: ${S.currentCard.a}`);
+  record(ratio>=1);
+  if(ratio>=1)setTimeout(()=>applyRating(4),1000);
+  else showRatingButtons();
+}
+
+function feedback(level,msg){
+  const fb=$('feedback-box');
+  if(!fb)return;
+  fb.textContent=msg;
+  fb.className=`feedback-box show ${level}`;
+}
+
+function showRatingButtons(){
+  document.querySelectorAll('.rating-btn').forEach(b=>b.classList.add('show'));
+}
+
+function record(isCorrect){
+  S.sessionTotal++;
+  if(isCorrect)S.sessionCorrect++;
+}
+
+function applyRating(q){
+  const card=S.currentCard;
+  if(card)sm2(card,q);
+  S.qIdx++;
+  document.querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('show'));
+  renderHome(); // keep sidebar fresh
+  setTimeout(showCard,200);
+}
+
+// ── DONE SCREEN ───────────────────────────────────────────────
+function showDone(){
+  const acc=S.sessionTotal?Math.round(S.sessionCorrect/S.sessionTotal*100):0;
+  const emoji=acc>=80?'🎉':acc>=50?'📚':'💪';
+  const weak=S.cards.filter(c=>c.history.length>0&&c.lastQ<3).map(c=>c.concept).filter(Boolean);
+  const weakUniq=[...new Set(weak)].slice(0,6);
+  $('study-body').innerHTML=`<div class="done-card fade-up">
+    <div class="done-emoji">${emoji}</div>
+    <div class="done-title">${acc>=80?'Nailed it!':acc>=50?'Making progress!':'Keep grinding!'}</div>
+    <div class="done-sub">${S.sessionTotal} cards reviewed</div>
+    <div class="done-stats">
+      <div class="done-stat"><div class="dn" style="color:var(--success)">${S.sessionCorrect}</div><div class="dl">Correct</div></div>
+      <div class="done-stat"><div class="dn" style="color:var(--danger)">${S.sessionTotal-S.sessionCorrect}</div><div class="dl">Missed</div></div>
+      <div class="done-stat"><div class="dn" style="color:var(--accent)">${acc}%</div><div class="dl">Accuracy</div></div>
+    </div>
+    ${weakUniq.length?`<div style="margin-bottom:1.25rem;text-align:left">
+      <div class="section-label" style="margin-bottom:.5rem">Needs more work</div>
+      ${weakUniq.map(w=>`<span style="display:inline-block;margin:.25rem;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:var(--danger);font-size:.73rem;padding:3px 9px;border-radius:999px">${w}</span>`).join('')}
+    </div>`:''}
+    <div style="display:flex;gap:.75rem;justify-content:center">
+      <button class="btn-action" onclick="startSession(S.mode)">Study Again</button>
+      <button class="btn-action sec" onclick="showScreen('home');renderHome()">← Home</button>
+    </div>
+  </div>`;
+  $('prog-fill').style.width='100%';
+  $('prog-txt').textContent=`${S.queue.length}/${S.queue.length}`;
+}
+
+// ── BOOTSTRAP ─────────────────────────────────────────────────
+function startStudy(text){
+  const cards=parseGuide(text);
+  if(!cards.length){
+    $('parse-error').textContent='Could not extract study cards. Add definitions (Term: meaning) or Q&A pairs.';
+    $('parse-error').style.display='';
+    return;
+  }
+  $('parse-error').style.display='none';
+  S.cards=cards;
+  S.concepts=buildConceptMap(cards);
+  S.title=text.split('\n').find(l=>l.trim().length>3)?.replace(/^#+\s*/,'').trim().slice(0,50)||'Study Session';
+  $('home-topic').textContent=S.title;
+  renderHome();
+  showScreen('home');
+}
+
+// ── EVENTS ────────────────────────────────────────────────────
+$('drop-zone').addEventListener('click',()=>$('file-input').click());
+$('drop-zone').addEventListener('dragover',e=>{e.preventDefault();$('drop-zone').classList.add('drag');});
+$('drop-zone').addEventListener('dragleave',()=>$('drop-zone').classList.remove('drag'));
+$('drop-zone').addEventListener('drop',e=>{
+  e.preventDefault();$('drop-zone').classList.remove('drag');
+  const f=e.dataTransfer.files[0];if(f)readFile(f);
+});
+$('file-input').addEventListener('change',e=>{if(e.target.files[0])readFile(e.target.files[0]);});
+function readFile(f){
+  const r=new FileReader();
+  r.onload=e=>{$('guide-text').value=e.target.result;$('btn-start').disabled=false;};
+  r.readAsText(f);
+}
+$('guide-text').addEventListener('input',()=>{
+  $('btn-start').disabled=$('guide-text').value.trim().length<10;
+});
+$('btn-start').addEventListener('click',()=>startStudy($('guide-text').value));
+$('btn-restart').addEventListener('click',()=>showScreen('upload'));
+$('btn-back-home').addEventListener('click',()=>{renderHome();showScreen('home');});
+$('btn-end-session').addEventListener('click',()=>{renderHome();showScreen('home');});
+
+document.querySelectorAll('.mode-card').forEach(mc=>{
+  mc.addEventListener('click',()=>startSession(mc.dataset.mode));
 });
 </script>
 </body>
